@@ -35,22 +35,49 @@
             name,
             mail
         }
-        localStorage.setItem(obj.email,JSON.stringify(obj));
+        localStorage.setItem(obj.mail,JSON.stringify(obj));
         showNewUserOnScreen(obj)
     }
     function showNewUserOnScreen(user){
+        document.getElementById('email').value = '';
+        document.getElementById('name').value = ''
+        if (localStorage.getItem(user.mail) !== null){
+            removeUserNameFromScreen(user.mail);
+        }
         const parentNode = document.getElementById('list');
-        const childNode = `<li> ${user.name} is registered with email ID : ${user.mail}`
+        const childNode = `<li> ${user.name} is registered with email ID : ${user.mail}
+            <button onclick =deleteUser('${user.mail}')> DELETE USER </button>
+            <button onclick =editUser('${user.name}',${user.mail}')> EDIT USER </button>`
         parentNode.innerHTML = parentNode.innerHTML + childNode
     }
-    Object.keys(localStorage).forEach((key) => {
+    function editUser(name,mail){
+        document.getElementById('name')=name;
+        document.getElementById('email')=mail;
+        deleteUser(mail);
+    }
+    function deleteUser(mail){
+        console.log(mail)
+        localStorage.removeItem(mail);
+        removeUserFromScreen(mail);
 
-
-
-        stringifiedDetailsOfPeople = localStorage.getItem(key);
-
-        detailsOfPeople = JSON.parse(stringifiedDetailsOfPeople);
-
-    });
+    }
+    
+    window.addEventListener("DOMContentLoaded",() =>{
+        const localStorageObject = localStorage ;
+        const localStorageKeys = Object.keys(localStorageObject);
+        for (var i=0; i<localStorageKeys.length; i++){
+            const key = localStorageKeys[i]
+            const userDetailsString = localStorageObject[key];
+            const userDetailsObject = JSON.parse(userDetailsString);
+            showNewUserOnScreen(userDetailsObject)
+        }
+    })
+    function removeUserNameFromScreen(mail){
+        const parentNode =  document.getElementById('ul');
+        const childNodeToBeDeleted = document.getElementById(mail);
+        if (childNodeToBeDeleted){
+            parentNode.removeChild(childNodeToBeDeleted)
+        }
+    }
 </script>
 </html>
